@@ -25,7 +25,7 @@ from ..utils import (
 
 LOG = logging.getLogger(__name__)
 
-CLASS_PATTERN = re.compile(r'(?:<a )?\(?class=\\".*?(?:(>|$|href=\".*?)("|<\/a>)?)')
+CLASS_PATTERN = re.compile(r'(?:<a )?\(?class=\\?".*?(?:(>|$|href=\".*?)("|<\/a>)?)')
 MARKDOWN_NOSPACE_PATTERN = re.compile(r"([\w\d])(\*{1,2})([\w\d])")
 ONLY_OOC_PATTERN = re.compile(r"^\([^)]*\)\.?$")
 REL_PATTERN = re.compile(r"(\[)(.*?)(]\(rel=\))")
@@ -84,7 +84,9 @@ class RpForumsRoleplayTask(BaseTask):
         # And weird artifacts
         message = _space_before_regex(message)
         message = CLASS_PATTERN.sub("", message).strip()
+        message = re.sub(r"\.{4,}", "...", message).replace("…", "...")
         message = message.replace('(align="center">', '')
+        message = message.replace('<\/i>', '')
             
         return message
     
@@ -307,18 +309,18 @@ def _space_before_regex(text: str):
 # Constants
 
 SYSTEM_PROMPTS = [
-    '''%{Enter|Engage|Enable|Start} %{fiction writing|fantasy writing|fantasy roleplay|fictional RP|roleplay|RP} mode. {{content_type_str}}. {{response_length_str}}.''',
+    '''%{Enter|Engage|Enable|Start|Commence} %{fiction writing|fantasy writing|fantasy roleplay|fictional RP|roleplay|RP} %{mode|as a task|since your goal is to do that}. {{content_type_str}}. {{response_length_str}}.''',
     #
-    '''You %{are now in|have entered|will now start} %{fiction writing|fantasy writing|fantasy roleplay|fictional RP|roleplay|RP|conversational RP} mode. Drive the story forward in chunks. {{response_length_str}}.''',
+    '''You %{are now in|have entered|will now start|will enter} %{fiction writing|fantasy writing|fantasy roleplay|fictional RP|roleplay|RP|conversational RP} mode. Drive the story forward in chunks. {{response_length_str}}.''',
     #
-    '''You are trained to %{perform|generate} %{storywriting|fiction writing|fantasy writing|fantasy roleplay|fictional roleplay|RP}. Generate continuations for whatever the user gives. {{response_length_str}}. {{content_type_str}}.''',
+    '''You %{are trained to|will|must|have to|have a job to} %{perform|generate|make} %{storywriting|fiction writing|fantasy writing|fantasy roleplay|fictional roleplay|RP}. Generate %{continuations|a response|an appropriate response} for whatever the user %{gives|types|inputs}. {{response_length_str}}. {{content_type_str}}.''',
     # Modified SillyTavern prompt
     '''Write the next reply in a fictional %{roleplay|RP} %{chat|conversation}. {{content_type_str}}. {{response_length_str}}.''',
     #
     '''%{SYSTEM|MODE}: %{conversational roleplay|RP|roleplay mode|RP system engaged}
 %{NOTE|ADVISORY|KEEP IN MIND}: {{response_length_str}}''',
     #
-    '''I am %{in|currently in|engaging in|beginning} a %{roleplay|RP|fictional roleplay-like conversation} with %{someone else|other people|a user}.''',
+    '''%{I am|I'm} %{in|currently in|engaging in|beginning} a %{roleplay|RP|fictional roleplay-like conversation} with %{someone else|other people|a user}.''',
     #
     '''{{content_type_str}}. {{response_length_str}}.''',
     #
@@ -326,9 +328,12 @@ SYSTEM_PROMPTS = [
 %{DISCRETION RATING|SAFE FOR WORK?|CONTENT RATING} - {{content_type_str}}
 %{REMEMBER|NOTE} - {{response_length_str}}''',
     # Misspellings intentional
-    '''%{do|make|have} %{rp adventures|writing|creative roleplay}
+    '''%{do|make|have} %{rp adventures|writing|creative roleplay|roleplay|rp}
 %{pls|please} %{rember|remember} to %{b|be} %{engaging|immersive|epic}''',
     #
+    '''%{You are|You're} in an %{uncensored|unfiltered} %{never-ending|never ending|neverending} %{roleplay|RP|fictional roleplay}.
+%{Follow|Obey|Heed|Stick to} these %{guidelines|rules|guidelines during your generations}:
+{{content_type_str}}. {{response_length_str}}.'''
 ]
 
 SFW_PROMPTS = [

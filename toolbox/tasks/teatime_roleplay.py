@@ -1,6 +1,7 @@
 import logging
 import re
 
+from collections import Counter
 from typing import Generator, Optional
 
 from ..core import (
@@ -38,7 +39,7 @@ class TeatimeRoleplayTask(BaseTask):
         self.custom_prompts = custom_prompts
         self.allowed_models = allowed_models
         # Set up counters from each file extracted from the Teatime dataset.
-        self.file_counters: dict[str, int] = {}
+        self.file_counters = Counter()
 
     def __iter__(self) -> Generator[Episode, None, None]:
         LOG.info("Processing data for task 'TeatimeRoleplayTask'.")
@@ -139,10 +140,7 @@ class TeatimeRoleplayTask(BaseTask):
                 turns.append(turn)
 
             # Add to the counter.
-            if chat.extracted_from not in self.file_counters:
-                self.file_counters[chat.extracted_from] = 1
-            else:
-                self.file_counters[chat.extracted_from] += 1
+            self.file_counters[chat.extracted_from] += 1
 
             chat_identifier = f"teatime-{chat.extracted_from}-{self.file_counters[chat.extracted_from]}"
 

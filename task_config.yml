@@ -1,8 +1,14 @@
 ---
-# Airoboros
+# Aesir
 AesirRoleplayTask:
   custom_prompts:
   dataset_name: "aesir"
+  filters:
+    - ExactDedupFilter
+# AI Dungeon
+AiDungeonTextAdventureTask:
+  custom_prompts:
+  dataset_name: "aidungeon"
   filters:
     - ExactDedupFilter
 # Airoboros

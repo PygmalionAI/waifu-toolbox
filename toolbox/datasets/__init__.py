@@ -1,6 +1,7 @@
 # TODO(TG): Add dynamic importing system so I don't have to constantly
 # update this file whenever I make a new task.
 from .aesir import AesirDataset
+from .aidungeon import AiDungeonDataset
 from .airoboros import AiroborosDataset
 from .aitown import AiTownDataset
 from .characterai import CharacterAiDataset
