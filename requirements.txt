@@ -1,8 +1,8 @@
+datasets
 ftfy
 markdownify
 pandas
 pyyaml
 langdetect
 scikit-learn
-tqdm
 ujson
