@@ -12,7 +12,7 @@ The general data flow goes something like this:
 
 - We start off with raw datasets (see [./toolbox/datasets/](./toolbox/datasets/))
   - These are basically classes reponsible for giving us raw data. They might, for example, download a `.zip` off the internet, unzip it, read a `.json` file from in there and then return its contents.
-- Tasks then make use of these datasets ([./toolbox/tasks/](./toolbox/tasks/)) ti create episodes
+- Tasks then make use of these datasets ([./toolbox/tasks/](./toolbox/tasks/)) to create episodes
   - In general, each task is responsible for using a dataset as an input and processing that data down into "episodes" consisting of turns between a user and what will be the output of a language model, usually alongside a system prompt. Our system prompts vary depending on the task, but one can supply their own system prompts for a specific task, as seen later.
 - At the task level, filters ([./toolbox/filters](./toolbox/filters/)) are applied to processed episodes based on certain criteria (for example, deduplicating a dataset or discarding low-quality data).
 - The episodes are then processed into a specified format ([./toolbox/formats](./toolbox/formats/)) which will represent the structure of the data in the form of a JSON object. These JSON objects will be written to an output file.

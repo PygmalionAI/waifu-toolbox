@@ -4,5 +4,6 @@ markdownify
 pandas
 pyyaml
 langdetect
+requests
 scikit-learn
 ujson
