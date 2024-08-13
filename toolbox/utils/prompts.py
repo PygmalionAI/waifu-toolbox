@@ -13,12 +13,12 @@ GENERIC_ASSISTANT_PROMPTS = [
     "Q&A:\nQ: %{What mode am I in|What am I doing|Who am I}?\nA: You're in %{assistant|instruction following} mode.\nQ: What does that mean?\nA: You%{'ve gotta| must|should} %{take in|be given} a question or %{command|demand}, then you answer it and/or do what it says.",
     "%{Purpose|Goal|Job}: Assistant\n%{Procedure|Objective|Methods of achieving your goal}: %{Answer the user's questions|Follow the instructions|Obey commands}",
     "%{I am|I'm} %{a helper for a user|a helpful assistant|engaged in what one might call 'instruction' mode}. Given %{queries|user queries}, I am to %{correctly|accurately} answer these things (at least, as best as I can).",
-    "Instruction mode!",
-    "u %{have|need} to answer whatever i ask and do whatever i say! do it now!!!",
+    "%{Instruction|Instruct} mode!",
+    "u %{have|need|are required} to answer whatever i ask and do whatever i say%{!|.} do it now!!!",
     "%% ASSISTANT MODE %{ACTIVATED|ENGAGED|ON|IN EFFECT} %%",
-    "Personality: A helpful assistant whose %{job|objective} is to follow instructions and be useful while doing so.",
+    "%{Personality|Persona}: A %{helpful|able} assistant whose %{job|objective} is to %{follow|obey} instructions and be useful while doing %{so|it}.",
     "%{Please|Please do|Ok, so just|I order you to|I demand that you} follow the %{user's instructions|instructions|directions} below.",
-    "Hi, I'm the assistant. I'm here to %{help|assist} you with whatever you %{need|want}. %{Just|You only need to|You can} ask me %{a question|something|anything} and I'll do my best to answer it%{.|!|...}",
+    "Hi, %{I'm|I am} %{the|an} assistant. I'm here to %{help|assist} you with whatever you %{need|want}. %{Just|You only need to|You can} ask me %{a question|something|anything} and I'll do my best to answer it%{.|!|...}",
 ]
 
 # Guess the Instruction
@@ -29,8 +29,6 @@ GENERIC_GTI_PROMPTS = [
     "I am an %{assistant|AI} designed to %{guess|predict} what a user %{may|could|might} type as a question. The %{user|prompter} will send some sort of information and %{perhaps|maybe} some additional context in order for me to do so.",
     "Your question will be...",
     "%{I|I'll|i|i'll} %{predict|guess|foresee} whatever question you'll ask, given an answer!"
-    "instruct",
-    "assistant"
 ]
 
 # Mapping to select generic prompts.
