@@ -2,10 +2,11 @@
 # update this file whenever I make a new task.
 from .aesir import AesirDataset
 from .aidungeon import AiDungeonDataset
-from .airoboros import AiroborosDataset
+from .airoboros1 import Airoboros1Dataset
 from .aitown import AiTownDataset
 from .characterai import CharacterAiDataset
 from .common import MessageAndRole
+from .mcstories import McStoriesDataset
 from .norobots import NoRobotsDataset
 from .opencai import OpenCaiDataset
 from .pygclaude import PygClaudeRpDataset

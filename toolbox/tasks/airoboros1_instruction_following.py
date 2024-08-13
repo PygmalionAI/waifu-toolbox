@@ -9,12 +9,12 @@ from ..core import (
     Turn,
     TurnKind
 )
-from ..datasets import AiroborosDataset
+from ..datasets import Airoboros1Dataset
 from ..utils import PromptManager
 
 LOG = logging.getLogger(__name__)
 
-class AiroborosInstructionFollowingTask(BaseTask):
+class Airoboros1InstructionFollowingTask(BaseTask):
     '''Instruction following task based on the Airoboros 1.4.1 dataset.'''
     def __init__(
         self,
@@ -30,7 +30,7 @@ class AiroborosInstructionFollowingTask(BaseTask):
         
     def __iter__(self) -> Generator[Episode, None, None]:
         LOG.info("Processing data for task AiroborosInstructionFollowingTask.")
-        for idx, example in enumerate(AiroborosDataset()):
+        for idx, example in enumerate(Airoboros1Dataset()):
             # Throw out any responses containing "Airoboros"
             if "airoboros" in example.generation.lower():
                 continue
@@ -55,7 +55,7 @@ class AiroborosInstructionFollowingTask(BaseTask):
             ]
 
             # Run through the filters.
-            episode = Episode(turns=turns, identifier=f"airoboros-instruct-{idx}")
+            episode = Episode(turns=turns, identifier=f"airoboros1-instruct-{idx}")
             if self.should_keep(episode):
                 # Passed through filters!
                 yield episode

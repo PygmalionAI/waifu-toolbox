@@ -64,7 +64,7 @@ class PromptManager:
     def generate_variants_for(
             self,
             string: str,
-            max_generations: int | None = 256,
+            max_generations: int | None = None,
             start_counter_at: int = 0) -> Generator[str, None, None]:
         '''
         Given a string like "%{Hello|Hi} there%{.|!}, this should yield:

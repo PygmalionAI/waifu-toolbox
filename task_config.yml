@@ -12,7 +12,7 @@ AiDungeonTextAdventureTask:
   filters:
     - ExactDedupFilter
 # Airoboros
-AiroborosInstructionFollowingTask:
+Airoboros1InstructionFollowingTask:
   custom_prompts:
   dataset_name: "airoboros"
   filters:
@@ -38,6 +38,13 @@ CharacterAiRoleplayTask:
     - RefusalFilter
     - SimilarityFilter
   timestamp_cutoff: -1
+# MCStories
+McStoriesWritingTask:
+  custom_prompts:
+  dataset_name: "mcstories"
+  filters:
+    - ExactDedupFilter
+    - LowQualityRpFilter
 # no_robots
 NoRobotsInstructionFollowingTask:
   custom_prompts:

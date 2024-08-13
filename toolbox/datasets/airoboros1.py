@@ -11,7 +11,7 @@ from ..utils import get_path_for
 
 LOG = logging.getLogger(__name__)
 
-class AiroborosDataset(BaseDataset[SimpleReplyDataInstance]):
+class Airoboros1Dataset(BaseDataset[SimpleReplyDataInstance]):
     '''
     The Airoboros 1.4.1 dataset, by jondurbin.
     https://huggingface.co/datasets/jondurbin/airoboros-gpt4-1.4.1
