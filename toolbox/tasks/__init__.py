@@ -6,6 +6,7 @@ from .aidungeon_text_adventure import AiDungeonTextAdventureTask
 from .airoboros1_instruction_following import Airoboros1InstructionFollowingTask
 from .aitown_roleplay import AiTownRoleplayTask
 from .characterai_roleplay import CharacterAiRoleplayTask
+from .clubfloyd_text_adventure import ClubFloydTextAdventureTask
 from .mcstories_writing import McStoriesWritingTask
 from .norobots_instruction_following import NoRobotsInstructionFollowingTask
 from .opencai_roleplay import OpenCaiRoleplayTask
@@ -21,6 +22,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         Airoboros1InstructionFollowingTask,
         AiTownRoleplayTask,
         CharacterAiRoleplayTask,
+        ClubFloydTextAdventureTask,
         McStoriesWritingTask,
         NoRobotsInstructionFollowingTask,
         OpenCaiRoleplayTask,

@@ -38,6 +38,14 @@ CharacterAiRoleplayTask:
     - RefusalFilter
     - SimilarityFilter
   timestamp_cutoff: -1
+# Club Floyd
+ClubFloydTextAdventureTask:
+  custom_prompts:
+  dataset_name: "clubfloyd"
+  filters:
+    - ExactDedupFilter
+    - SimilarityFilter
+  min_user_rating: 3.0
 # MCStories
 McStoriesWritingTask:
   custom_prompts:

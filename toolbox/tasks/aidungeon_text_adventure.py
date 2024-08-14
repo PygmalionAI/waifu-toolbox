@@ -73,9 +73,15 @@ class AiDungeonTextAdventureTask(BaseTask):
 
                 #print(f"Number of story turns: {len(turns)}")
                 #print(f"Story turns: {turns}")
+                episode = Episode(turns=turns, identifier=f"ai-dungeon-{idx}")
+                if len(turns) < 3:
+                    LOG.debug(f"Episode ai-dungeon-{idx} skipped due to having less than 3 turns.")
+                    current_story = ""
+                    idx += 1
+                    continue
 
-                if len(turns) >= 3:
-                    yield Episode(turns=turns, identifier=f"ai-dungeon-{idx}")
+                if self.should_keep(episode):
+                    yield episode
 
                 current_story = ""
                 idx += 1

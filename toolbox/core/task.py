@@ -1,8 +1,11 @@
+import logging
 from typing import Optional
 
 from .filters import BaseFilter
 from .turns import Episode, Turn
 from ..utils import PromptManager
+
+LOG = logging.getLogger(__name__)
 
 class BaseTask:
     '''Base task class. Relies on config fed into this task.'''
