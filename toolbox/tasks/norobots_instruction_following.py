@@ -30,7 +30,7 @@ class NoRobotsInstructionFollowingTask(BaseTask):
         }
         
     def __iter__(self) -> Generator[Episode, None, None]:
-        LOG.info("Processing data for task 'NoRobotsInstructionFollowingTask'.")
+        LOG.info("Processing data for task NoRobotsInstructionFollowingTask.")
         for example in NoRobotsDataset():
             conversation = example.conversation
             if self.custom_prompts is not None:

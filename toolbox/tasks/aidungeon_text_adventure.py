@@ -60,6 +60,7 @@ class AiDungeonTextAdventureTask(BaseTask):
         return turns
         
     def __iter__(self) -> Generator[Episode, None, None]:
+        LOG.info("Processing data for task AiDungeonTextAdventureTask.")
         idx = 0
         current_story = ""
 
@@ -74,11 +75,6 @@ class AiDungeonTextAdventureTask(BaseTask):
                 #print(f"Number of story turns: {len(turns)}")
                 #print(f"Story turns: {turns}")
                 episode = Episode(turns=turns, identifier=f"ai-dungeon-{idx}")
-                if len(turns) < 3:
-                    LOG.debug(f"Episode ai-dungeon-{idx} skipped due to having less than 3 turns.")
-                    current_story = ""
-                    idx += 1
-                    continue
 
                 if self.should_keep(episode):
                     yield episode

@@ -34,12 +34,12 @@ class AiTownRoleplayTask(BaseTask):
         }
 
     def __iter__(self) -> Generator[Episode, None, None]:
-        LOG.info("Processing data for task 'AiTownRoleplayTask'.")
+        LOG.info("Processing data for task AiTownRoleplayTask.")
         for idx, example in enumerate(AiTownDataset()):
             conversation = example.conversation
 
             if len(conversation) < 3:
-                LOG.debug(f"Skipping conversation aitown-{idx} because it has less than three messages.")
+                LOG.debug(f"Skipping conversation aitown-{idx} because it has less than three messages!")
                 continue
 
             # Process the system prompt first, which is always the first message.

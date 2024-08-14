@@ -35,10 +35,11 @@ class ClubFloydTextAdventureTask(BaseTask):
         self.min_user_rating = min_user_rating
 
     def __iter__(self) -> Generator[Episode, None, None]:
+        LOG.info("Processing data for task ClubFloydTextAdventureTask.")
         for idx, story in enumerate(ClubFloydDataset()):
             if story.average_rating < self.min_user_rating:
                 # At default value of 3.0, takes out ~15% of the data.
-                LOG.debug(f"Story \"{story.name} skipped due to rating below minimum threshold")
+                LOG.debug(f"Story \"{story.name} skipped due to rating below minimum threshold!")
                 continue
 
             sys_prompt = self.sys_prompts.sample_prompt()

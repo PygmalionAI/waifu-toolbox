@@ -24,8 +24,12 @@ class BaseTask:
 
     def should_keep(self, example: Episode) -> bool:
         '''
-        Filtering on a task-specific level.
+        Filtering on a task-specific level as well as a general check to see if
+        the Episode has less than 3 turns.
         '''
+        if len(example.turns) < 3:
+            LOG.debug(f"Episode {example.identifier} skipped because it has less than 3 turns!")
+            return False
         for filter in self.filters:
             if not filter.should_keep(example):
                 return False

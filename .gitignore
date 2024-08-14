@@ -13,3 +13,4 @@
 
 # Testing files.
 /test_config.yml
+/*.jsonl

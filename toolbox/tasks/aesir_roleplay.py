@@ -45,7 +45,7 @@ class AesirRoleplayTask(BaseTask):
         for i, c in enumerate(AesirDataset()):
             # If there are less than three messages, we skip it.
             if len(c.conversation) < 3:
-                LOG.debug(f"Skipping conversation aesir-{i} because it has less than three messages.")
+                LOG.debug(f"Skipping conversation aesir-{i} because it has less than three messages!")
                 continue
 
             turns: list[Turn] = []

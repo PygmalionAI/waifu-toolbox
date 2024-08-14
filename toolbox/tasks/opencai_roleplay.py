@@ -29,7 +29,7 @@ class OpenCaiRoleplayTask(BaseTask):
         self.custom_prompts = custom_prompts
 
     def __iter__(self) -> Generator[Episode, None, None]:
-        LOG.info("Processing data for task 'OpenCaiRoleplayTask'.")
+        LOG.info("Processing data for task OpenCaiRoleplayTask.")
         for idx, example in enumerate(OpenCaiDataset()):
             conversation = example.conversation
 
@@ -41,7 +41,7 @@ class OpenCaiRoleplayTask(BaseTask):
             conversation = new_convo
 
             if len(conversation) < 2:
-                LOG.debug(f"Skipping conversation opencai-{idx} because it has less than two messages.")
+                LOG.debug(f"Skipping conversation opencai-{idx} because it has less than two messages!")
                 continue
 
             # While the system prompt is a field in the OpenCAI data, it is always

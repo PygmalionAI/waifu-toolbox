@@ -32,12 +32,12 @@ class PygClaudeRoleplayTask(BaseTask):
         self.prompts = PromptManager(**kwargs)
 
     def __iter__(self) -> Generator[Episode, None, None]:
-        LOG.info("Processing data for task 'PygClaudeRoleplayTask'.")
+        LOG.info("Processing data for task PygClaudeRoleplayTask.")
         for idx, example in enumerate(PygClaudeRpDataset()):
             # Skip if there are less than two messages.
             if len(example.messages) < 2 or len(set([msg.is_human \
                 for msg in example.messages])) < 2:
-                LOG.debug(f"Skipping conversation {idx} because it has either less than two messages or has only one speaker.")
+                LOG.debug(f"Skipping conversation {idx} because it has either less than two messages or has only one speaker!")
                 continue
 
             # Construct the system prompt.

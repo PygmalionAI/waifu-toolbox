@@ -97,7 +97,7 @@ class RpForumsRoleplayTask(BaseTask):
         self.current_kind = TurnKind.USER
 
     def __iter__(self) -> Generator[Episode, None, None]:
-        LOG.info("Processing data for task 'RpForumsRoleplayTask'.")
+        LOG.info("Processing data for task RpForumsRoleplayTask.")
         for thread in RpForumsDataset():
             # Set up a buffer for keeping track of authors.
             # If two posts are made by the author in a row, chain it. This way
@@ -112,20 +112,18 @@ class RpForumsRoleplayTask(BaseTask):
                         "character list", "character roster"
                     ]
             ]):
-                LOG.debug(f"Skipping {thread.thread_name} due to thread name",
-                          )
+                LOG.debug(f"Skipping {thread.thread_name} due to likely being OOC-related!")
                 continue
 
             if len(thread.messages) < 2:
-                LOG.debug(f'Skipping {thread.thread_name} with only one message',
-                          )
+                LOG.debug(f'Skipping {thread.thread_name} with only one message!')
                 continue
 
             # If the thread only has one author, no way to tell between human
             # and model turns.
             usernames = set([t.author for t in thread.messages])
             if len(usernames) != 2:
-                LOG.debug(f"Skipping {thread.thread_name} that doesn't have 2 authors")
+                LOG.debug(f"Skipping {thread.thread_name} that doesn't have 2 authors!")
                 continue
 
             # Build up a dictionary of usernames to replace for privacy reasons.
@@ -201,7 +199,7 @@ class RpForumsRoleplayTask(BaseTask):
             # results in a faulty message.
             # If this is the case for every message, just ditch the thread.
             if _thread_unsalvagable(turns[1:]):
-                LOG.info(f"Skipping {thread.thread_name} due to being deemed 'unsalvagable'")
+                LOG.info(f"Skipping {thread.thread_name} due to being deemed 'unsalvagable'!")
                 continue
 
             # Update the system prompt by filling in the template strings.

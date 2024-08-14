@@ -34,6 +34,7 @@ class McStoriesWritingTask(BaseTask):
         self.prompts = PromptManager(**kwargs)
 
     def __iter__(self) -> Generator[Episode, None, None]:
+        LOG.info("Processing data for task McStoriesWritingTask.")
         for idx, story in enumerate(McStoriesDataset()):
 
             contents = _html_story_to_clean_md(story.text_contents)
@@ -65,10 +66,6 @@ class McStoriesWritingTask(BaseTask):
                     utterance=chunk,
                     kind=current_turn,
                 ))
-
-            if len(turns) < 3:
-                LOG.debug(f"Skipping conversation mcstories-{idx} because it has less than three turns.")
-                continue
 
             turns = self.fill_response_template_strs(turns)
 
