@@ -38,6 +38,13 @@ CharacterAiRoleplayTask:
     - RefusalFilter
     - SimilarityFilter
   timestamp_cutoff: -1
+ClaudeMultiroundInstructTask:
+  custom_prompts:
+  dataset_name: "claude-multiround"
+  filters:
+    - ExactDedupFilter
+    - LlmSlopFilter
+    - RefusalFilter
 # Club Floyd
 ClubFloydTextAdventureTask:
   custom_prompts:
