@@ -11,7 +11,15 @@ AiDungeonTextAdventureTask:
   dataset_name: "aidungeon"
   filters:
     - ExactDedupFilter
-# Airoboros
+# Airoboros 1.4.1 - guess the instruction
+Airoboros1GuessInstructionTask:
+  custom_prompts:
+  dataset_name: "airoboros"
+  filters:
+    - ExactDedupFilter
+    - LlmSlopFilter
+    - RefusalFilter
+# Airoboros 1.4.1 - instruct
 Airoboros1InstructionFollowingTask:
   custom_prompts:
   dataset_name: "airoboros"
