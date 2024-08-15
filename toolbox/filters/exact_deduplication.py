@@ -31,9 +31,7 @@ class ExactDedupFilter(BaseFilter):
         # Hash the turns
         to_hash = "".join(checkable_turns)
         hash = hashlib.sha256(to_hash.encode()).hexdigest()
-        # Use a try-except statement to attempt to access the hashmap.
-        # If there's no entry corresponding to the hash in the hashmap,
-        # this means that the episode is unique.
+
         if hash in self.hashmap:
             duped_identifier = self.hashmap[hash]
             LOG.debug(f"Episode {episode.identifier} dropped due to being a duplication of episode {duped_identifier}!")

@@ -14,7 +14,8 @@ DetectorFactory.seed = 42
 class EnglishFilter(BaseFilter):
     '''
     This filter uses langdetect to weed out any non-English conversations.
-    A threshold is specified. If the ratio of non-English messages to total messages
+    A threshold is specified. If the ratio of non-English messages to total messages is
+    greater than or equal to the threshold, the episode is dropped.
     '''
     def __init__(self) -> None:
         # Init method is required.

@@ -12,4 +12,5 @@ from .norobots import NoRobotsDataset
 from .opencai import OpenCaiDataset
 from .pygclaude import PygClaudeRpDataset
 from .rp_forums import RpForumsDataset, RpType
+from .slimorca import SlimOrcaDataset
 from .teatime import TeatimeDataset

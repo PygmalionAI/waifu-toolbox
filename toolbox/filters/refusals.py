@@ -146,8 +146,8 @@ class RefusalFilter(BaseFilter):
     def should_keep(self, episode: Episode) -> bool:
         for i, turn in enumerate(episode.turns, start=1):
             message = turn.utterance
-            # Ignore the system prompt on this one.
-            if turn.kind != TurnKind.SYSTEM:
+            # Focus on only model turns.
+            if turn.kind == TurnKind.MODEL:
                 # Go through the list of bad phrases
                 for phrase in BAD_PHRASES:
                     if phrase in message.lower():
