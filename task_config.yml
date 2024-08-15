@@ -53,6 +53,12 @@ ClubFloydTextAdventureTask:
     - ExactDedupFilter
     - SimilarityFilter
   min_user_rating: 3.0
+# Dolly
+DollyGuessInstructionTask:
+  custom_prompts:
+  dataset_name: "dolly"
+  filters:
+    - ExactDedupFilter
 # MCStories
 McStoriesWritingTask:
   custom_prompts:
@@ -67,6 +73,7 @@ NoRobotsInstructionFollowingTask:
   filters:
     - ExactDedupFilter
     - RefusalFilter
+    - LlmSlopFilter
 # OpenCAI
 OpenCaiRoleplayTask:
   custom_prompts:

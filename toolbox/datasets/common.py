@@ -5,6 +5,12 @@ Common dataclasses for use in multiple datasets.
 from dataclasses import dataclass
 
 @dataclass
+class AlpacaLikeDataInstance:
+    instruction: str
+    input: str
+    output: str
+
+@dataclass
 class MessageAndRole:
     message: str
     role: str
