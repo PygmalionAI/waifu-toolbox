@@ -11,23 +11,23 @@ from ..utils import get_path_for
 LOG = logging.getLogger(__name__)
 
 
-class ClaudeMultiroundDataset(BaseDataset[MessageAndRole]):
+class LimaRpDataset(BaseDataset[MessageAndRole]):
     '''
-    Logs taken from synthetically-generated instruction chats with Claude.
-    https://huggingface.co/datasets/Norquinal/claude_multiround_chat_30k
+    Augmented version of the LIMARP dataset.
+    https://huggingface.co/datasets/grimulkan/LimaRP-augmented
     '''
     def __iter__(self) -> Generator[MessageAndRoleConversationWithId, None, None]:
-        root_path = get_path_for("claude-multiround")
-        file_path = os.path.join(root_path, "claude_multiround_chat_30k.json")
+        root_path = get_path_for("limarp")
+        file_path = os.path.join(root_path, "LimaRP-augmented.json")
 
         with open(file_path, "r", encoding="utf-8") as f:
             logs = json.load(f)
             # Go through the logs and simply fetch them
-            for round in logs:
+            for rp in logs:
                 conversation = [
                     MessageAndRole(
                         message=msg["value"],
                         role=msg["from"]
-                    ) for msg in round["conversations"]
+                    ) for msg in rp["conversations"]
                 ]
-                yield MessageAndRoleConversationWithId(conversation=conversation, id=round["id"])
+                yield MessageAndRoleConversationWithId(conversation=conversation, id=rp["id"])

@@ -45,6 +45,7 @@ CharacterAiRoleplayTask:
     - LlmSlopFilter
     - RefusalFilter
     - SimilarityFilter
+  # If wanting only entries before Pyg-6B release, set to this: 1673398838000
   timestamp_cutoff: -1
 ClaudeMultiroundInstructTask:
   custom_prompts:
@@ -67,6 +68,13 @@ DollyGuessInstructionTask:
   dataset_name: "dolly"
   filters:
     - ExactDedupFilter
+# LIMARP
+LimaRpRoleplayTask:
+  custom_prompts:
+  dataset_name: "limarp"
+  filters:
+    - ExactDedupFilter
+    - LowQualityRpFilter
 # MCStories
 McStoriesWritingTask:
   custom_prompts:

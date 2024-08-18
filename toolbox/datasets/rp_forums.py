@@ -120,4 +120,6 @@ SHA256_DIGEST_TO_RP_TYPE_MAP: dict[str, RpType] = {
         RpType.ERP,
     '3179b0c4ee80dc14eb3b08447d693382df2062602c40d543b1946b2ddf32daf8':
         RpType.ERP,
+    'b8180857701e06dde3c00cda8a3ac58a38dd32800e09551a45626d2b21d3857a':
+        RpType.ERP,
 }

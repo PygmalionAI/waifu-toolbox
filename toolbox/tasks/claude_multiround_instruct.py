@@ -31,6 +31,7 @@ class ClaudeMultiroundInstructTask(BaseTask):
         self.prompts = PromptManager(**kwargs)
 
     def __iter__(self) -> Generator[Episode, None, None]:
+        LOG.info("Processing data for task ClaudeMultiroundInstructTask.")
         for round in ClaudeMultiroundDataset():
             # Keep track if the conversation has abruptly ended without a full exchange
             aborted_convo = False
@@ -46,7 +47,7 @@ class ClaudeMultiroundInstructTask(BaseTask):
             # Then work through the rest of the replies.
             for message in round.conversation:
                 # NOTE(TG): Some messages in these Claude logs are for some reason totally blank.
-                if message["value"].strip() == "":
+                if message.message.strip() == "":
                     # We check if the conversation has had a full exchange (system prompt, user input, model gen)
                     if len(turns) < 3:
                         # If not, abort the conversation and don't yield it.
@@ -56,18 +57,20 @@ class ClaudeMultiroundInstructTask(BaseTask):
                         # If so, check to see if the blank reply comes from the human or the model.
                         # If it's the model, then we knock the last human turn off to make sure the turns list
                         # ends on a model gen.
-                        if message["from"] == "gpt":
+                        if message.role == "gpt":
                             turns = turns[:-1]
                     break
 
                 turns.append(Turn(
-                    utterance=message["value"],
-                    kind=TurnKind.USER if message["from"] == "human" else TurnKind.MODEL
+                    utterance=message.message,
+                    kind=TurnKind.USER if message.role == "human" else TurnKind.MODEL
                 ))
             
-            # Now yield.
-            if not aborted_convo:
-                yield Episode(
-                    turns=turns,
-                    identifier=f"claude-multiround-{round.id}"
-                )
+            # Now yield after pass through filters.
+            episode = Episode(
+                turns=turns,
+                identifier=f"claude-multiround-{round.id}"
+            )
+            
+            if (not aborted_convo) and self.should_keep(episode):
+                yield episode

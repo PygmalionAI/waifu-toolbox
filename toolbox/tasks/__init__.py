@@ -10,6 +10,7 @@ from .characterai_roleplay import CharacterAiRoleplayTask
 from .claude_multiround_instruct import ClaudeMultiroundInstructTask
 from .clubfloyd_text_adventure import ClubFloydTextAdventureTask
 from .dolly_guess_instruction import DollyGuessInstructionTask
+from .limarp_roleplay import LimaRpRoleplayTask
 from .mcstories_writing import McStoriesWritingTask
 from .norobots_instruction_following import NoRobotsInstructionFollowingTask
 from .opencai_roleplay import OpenCaiRoleplayTask
@@ -30,6 +31,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         ClaudeMultiroundInstructTask,
         ClubFloydTextAdventureTask,
         DollyGuessInstructionTask,
+        LimaRpRoleplayTask,
         McStoriesWritingTask,
         NoRobotsInstructionFollowingTask,
         OpenCaiRoleplayTask,

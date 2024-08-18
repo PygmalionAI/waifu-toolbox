@@ -20,6 +20,11 @@ class MessageAndRoleConversation:
     conversation: list[MessageAndRole]
 
 @dataclass
+class MessageAndRoleConversationWithId:
+    conversation: list[MessageAndRole]
+    id: str
+
+@dataclass
 class MessageWithHumanBool:
     message: str
     is_human: bool
