@@ -28,7 +28,7 @@ class NoRobotsDataset(BaseDataset[NoRobotsConversation]):
     '''
     def __iter__(self) -> Generator[NoRobotsConversation, None, None]:
         root_path = get_path_for("no_robots")
-        file_path = os.path.join(root_path, "train_sft-00000-of-00001-8aba5401a3b757f5.parquet")
+        file_path = os.path.join(root_path, "train_sft-00000-of-00001.parquet")
 
         df = pd.read_parquet(file_path)
         for _, row in df.iterrows():

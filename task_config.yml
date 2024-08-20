@@ -99,7 +99,15 @@ McStoriesWritingTask:
   filters:
     - ExactDedupFilter
     - LowQualityRpFilter
-# no_robots
+# no_robots - guess the instruction
+NoRobotsGuessInstructionTask:
+  custom_prompts:
+  dataset_name: "no_robots"
+  filters:
+    - ExactDedupFilter
+    - RefusalFilter
+    - LlmSlopFilter
+# no_robots - instruction following
 NoRobotsInstructionFollowingTask:
   custom_prompts:
   dataset_name: "no_robots"

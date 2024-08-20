@@ -14,6 +14,7 @@ from .dolly_guess_instruction import DollyGuessInstructionTask
 from .limarp_roleplay import LimaRpRoleplayTask
 from .magnum_mixed_tasks import MagnumMixedPurposeTask
 from .mcstories_writing import McStoriesWritingTask
+from .norobots_guess_instruction import NoRobotsGuessInstructionTask
 from .norobots_instruction_following import NoRobotsInstructionFollowingTask
 from .opencai_roleplay import OpenCaiRoleplayTask
 from .pygclaude_roleplay import PygClaudeRoleplayTask
@@ -37,6 +38,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         LimaRpRoleplayTask,
         MagnumMixedPurposeTask,
         McStoriesWritingTask,
+        NoRobotsGuessInstructionTask,
         NoRobotsInstructionFollowingTask,
         OpenCaiRoleplayTask,
         PygClaudeRoleplayTask,
