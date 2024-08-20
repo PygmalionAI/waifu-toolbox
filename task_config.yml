@@ -83,6 +83,12 @@ GemstructChatTask:
     - ExactDedupFilter
     - RefusalFilter
   use_llama_outputs: false
+# Small personal dataset
+GoslingSetMixedPurposeTask:
+  custom_prompts:
+  dataset_name: "gosling"
+  filters:
+    - ExactDedupFilter
 # LIMARP
 LimaRpRoleplayTask:
   custom_prompts:

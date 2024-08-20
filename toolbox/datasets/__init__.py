@@ -11,6 +11,7 @@ from .clubfloyd import ClubFloydDataset
 from .common import MessageAndRole
 from .dolly import DollyDataset
 from .gemstruct import GemstructDataset
+from .goslingset import GoslingDataset
 from .limarp import LimaRpDataset
 from .magnum import MagnumDataset
 from .mcstories import McStoriesDataset
