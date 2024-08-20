@@ -1,9 +1,12 @@
+import logging
 import os
 
 from typing import Generator
 
 from ..core import BaseDataset
 from ..utils import get_path_for
+
+LOG = logging.getLogger(__name__)
 
 class AiDungeonDataset(BaseDataset[str]):
     '''

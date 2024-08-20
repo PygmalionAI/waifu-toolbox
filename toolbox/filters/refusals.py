@@ -128,7 +128,7 @@ BAD_PHRASES = [
     "can't generate that conversation"
     "openai",
     "chatgpt",
-    "anthropic"
+    "anthropic",
 ]
 
 class RefusalFilter(BaseFilter):

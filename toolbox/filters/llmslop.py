@@ -65,7 +65,8 @@ CLAUDE_SLOP = [
     "...for now.",
     "whether you like it or not",
     "without waiting for a response",
-    "claude"
+    "claude",
+    "ai bard",
 ]
 
 SLOP = GPT_SLOP + CLAUDE_SLOP

@@ -29,7 +29,7 @@ def get_path_for(dataset_name: str | None) -> str:
 
 def enumerate_files_for(
     dataset_name: str,
-    file_extension: str,
+    file_extension: str | list[str],
     subfolder: str | None = None,
 ) -> list[str]:
     '''Returns a list of files available for the given dataset.'''
@@ -45,9 +45,14 @@ def enumerate_files_for(
             # We don't care about folders.
             continue
 
-        if not item_path.endswith(file_extension):
-            # Ignore invalid file extensions.
-            continue
+        if isinstance(file_extension, list):
+            if not any(item_path.endswith(ext) for ext in file_extension):
+                # Ignore invalid file extensions.
+                continue
+        else:
+            if not item_path.endswith(file_extension):
+                # Ignore invalid file extensions.
+                continue
 
         absolute_file_path = os.path.abspath(item_path)
         files.append(absolute_file_path)

@@ -42,8 +42,6 @@ CharacterAiRoleplayTask:
   filters:
     - EnglishFilter
     - ExactDedupFilter
-    - LlmSlopFilter
-    - RefusalFilter
     - SimilarityFilter
   # If wanting only entries before Pyg-6B release, set to this: 1673398838000
   timestamp_cutoff: -1
@@ -75,6 +73,17 @@ LimaRpRoleplayTask:
   filters:
     - ExactDedupFilter
     - LowQualityRpFilter
+# Magnum
+MagnumMixedPurposeTask:
+  custom_prompts:
+  dataset_name: "magnum"
+  filters:
+    - EnglishFilter
+    - ExactDedupFilter
+    - LlmSlopFilter
+    - RefusalFilter
+    - SimilarityFilter
+  replace_claude_prompt: true
 # MCStories
 McStoriesWritingTask:
   custom_prompts:

@@ -10,6 +10,7 @@ from .clubfloyd import ClubFloydDataset
 from .common import MessageAndRole
 from .dolly import DollyDataset
 from .limarp import LimaRpDataset
+from .magnum import MagnumDataset
 from .mcstories import McStoriesDataset
 from .norobots import NoRobotsDataset
 from .opencai import OpenCaiDataset
