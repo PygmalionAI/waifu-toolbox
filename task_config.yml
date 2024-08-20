@@ -35,6 +35,14 @@ AiTownRoleplayTask:
     - ExactDedupFilter
     - LlmSlopFilter
     - RefusalFilter
+# Capybara
+CapybaraInstructionFollowingTask:
+  custom_prompts:
+  dataset_name: "capybara"
+  filters:
+    - ExactDedupFilter
+    - LlmSlopFilter
+    - SimilarityFilter
 # CAI
 CharacterAiRoleplayTask:
   custom_prompts:

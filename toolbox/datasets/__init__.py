@@ -4,6 +4,7 @@ from .aesir import AesirDataset
 from .aidungeon import AiDungeonDataset
 from .airoboros1 import Airoboros1Dataset
 from .aitown import AiTownDataset
+from .capybara import CapybaraDataset
 from .characterai import CharacterAiDataset
 from .claude_multiround import ClaudeMultiroundDataset
 from .clubfloyd import ClubFloydDataset

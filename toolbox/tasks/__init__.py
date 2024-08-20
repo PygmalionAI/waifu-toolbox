@@ -6,6 +6,7 @@ from .aidungeon_text_adventure import AiDungeonTextAdventureTask
 from .airoboros1_guess_instruction import Airoboros1GuessInstructionTask
 from .airoboros1_instruction_following import Airoboros1InstructionFollowingTask
 from .aitown_roleplay import AiTownRoleplayTask
+from .capybara_instruction_following import CapybaraInstructionFollowingTask
 from .characterai_roleplay import CharacterAiRoleplayTask
 from .claude_multiround_instruct import ClaudeMultiroundInstructTask
 from .clubfloyd_text_adventure import ClubFloydTextAdventureTask
@@ -28,6 +29,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         Airoboros1GuessInstructionTask,
         Airoboros1InstructionFollowingTask,
         AiTownRoleplayTask,
+        CapybaraInstructionFollowingTask,
         CharacterAiRoleplayTask,
         ClaudeMultiroundInstructTask,
         ClubFloydTextAdventureTask,
@@ -40,6 +42,6 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         PygClaudeRoleplayTask,
         RpForumsRoleplayTask,
         SlimOrcaInstructionFollowingTask,
-        TeatimeRoleplayTask
+        TeatimeRoleplayTask,
     ]
 }
