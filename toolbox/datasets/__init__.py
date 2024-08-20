@@ -10,6 +10,7 @@ from .claude_multiround import ClaudeMultiroundDataset
 from .clubfloyd import ClubFloydDataset
 from .common import MessageAndRole
 from .dolly import DollyDataset
+from .gemstruct import GemstructDataset
 from .limarp import LimaRpDataset
 from .magnum import MagnumDataset
 from .mcstories import McStoriesDataset

@@ -74,6 +74,15 @@ DollyGuessInstructionTask:
   dataset_name: "dolly"
   filters:
     - ExactDedupFilter
+# Gemstruct
+GemstructChatTask:
+  capital_threshold: 0.5
+  custom_prompts:
+  dataset_name: "gemstruct"
+  filters:
+    - ExactDedupFilter
+    - RefusalFilter
+  use_llama_outputs: false
 # LIMARP
 LimaRpRoleplayTask:
   custom_prompts:

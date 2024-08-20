@@ -7,7 +7,7 @@ import ujson
 
 from .common import MessageAndRole, MessageAndRoleConversation
 from ..core import BaseDataset
-from ..utils import enumerate_files_for, get_path_for
+from ..utils import get_path_for
 
 LOG = logging.getLogger(__name__)
 

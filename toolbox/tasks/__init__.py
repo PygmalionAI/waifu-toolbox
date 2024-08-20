@@ -11,6 +11,7 @@ from .characterai_roleplay import CharacterAiRoleplayTask
 from .claude_multiround_instruct import ClaudeMultiroundInstructTask
 from .clubfloyd_text_adventure import ClubFloydTextAdventureTask
 from .dolly_guess_instruction import DollyGuessInstructionTask
+from .gemstruct_chat import GemstructChatTask
 from .limarp_roleplay import LimaRpRoleplayTask
 from .magnum_mixed_tasks import MagnumMixedPurposeTask
 from .mcstories_writing import McStoriesWritingTask
@@ -35,6 +36,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         ClaudeMultiroundInstructTask,
         ClubFloydTextAdventureTask,
         DollyGuessInstructionTask,
+        GemstructChatTask,
         LimaRpRoleplayTask,
         MagnumMixedPurposeTask,
         McStoriesWritingTask,
