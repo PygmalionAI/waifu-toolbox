@@ -14,21 +14,12 @@ from ..core import (
 )
 from ..datasets import RpForumsDataset, RpType
 from ..utils import (
-    fix_style_and_encoding_issues,
-    remove_excessive_newlines,
-    remove_links,
-    remove_mentions,
-    remove_ooc,
-    remove_trailing_whitespace_and_bad_lines,
+    clean_message,
+    thread_unsalvagable,
     PromptManager
 )
 
 LOG = logging.getLogger(__name__)
-
-CLASS_PATTERN = re.compile(r'(?:<a )?\(?class=\\?".*?(?:(>|$|href=\".*?)("|<\/a>)?)')
-MARKDOWN_NOSPACE_PATTERN = re.compile(r"([\w\d])(\*{1,2})([\w\d])")
-ONLY_OOC_PATTERN = re.compile(r"^\([^)]*\)\.?$")
-REL_PATTERN = re.compile(r"(\[)(.*?)(]\(rel=\))")
 
 class RpForumsRoleplayTask(BaseTask):
     '''
@@ -47,48 +38,6 @@ class RpForumsRoleplayTask(BaseTask):
             kwargs = {"custom_prompts": SYSTEM_PROMPTS} if custom_prompts is None \
             else {"custom_prompts": custom_prompts}
         self.prompts = PromptManager(**kwargs)
-
-    def _clean_message(
-        self,
-        message: str,
-        username_subs: dict[str, str]
-    ) -> str:
-        '''
-        Cleans a single message. Best to keep this in its own separate
-        function for readability and also so that we can keep it isolated
-        from the yielding process, due to having to keep buffers in mind.
-        '''
-        message = fix_style_and_encoding_issues(message)
-        message = _remove_bad_html_tags(message)
-        message = remove_links(message)
-
-        # Convert to markdown.
-        message = str(markdownify(message))
-        message = remove_trailing_whitespace_and_bad_lines(message)
-        message = _fix_markdown(message)
-
-        # Excessive newlines
-        message = remove_excessive_newlines(message)
-
-        # Username substitutions need to be done _after_ the HTML has
-        # been converted into markdown, otherwise we get escape
-        # characters messing things up.
-        for name, substitution in username_subs.items():
-            message = re.sub(rf"\b{re.escape(name)}\b",
-                                    substitution, message)
-            
-        # Remove mentions and OOC if user wants OOC to be purged.
-        message = remove_mentions(message)
-        if self.remove_ooc:
-            message = remove_ooc(message)
-        # And weird artifacts
-        message = _space_before_regex(message)
-        message = CLASS_PATTERN.sub("", message).strip()
-        message = re.sub(r"\.{4,}", "...", message).replace("…", "...")
-        message = message.replace('(align="center">', '')
-        message = message.replace('<\/i>', '')
-            
-        return message
     
     def _reset_buffer(self) -> None:
         '''Resets the buffer.'''
@@ -178,9 +127,10 @@ class RpForumsRoleplayTask(BaseTask):
                     self.full_post = ""
 
                 # Process the message.
-                cleaned_message = self._clean_message(
+                cleaned_message = clean_message(
                     message.message, 
-                    username_substitutions
+                    username_substitutions,
+                    self.remove_ooc
                 )
 
                 self.full_post = (self.full_post + f"\n{cleaned_message}").strip()
@@ -198,7 +148,7 @@ class RpForumsRoleplayTask(BaseTask):
             # Sometimes we just have a situation where the HTML cleaning
             # results in a faulty message.
             # If this is the case for every message, just ditch the thread.
-            if _thread_unsalvagable(turns[1:]):
+            if thread_unsalvagable(turns[1:]):
                 LOG.info(f"Skipping {thread.thread_name} due to being deemed 'unsalvagable'!")
                 continue
 
@@ -213,97 +163,6 @@ class RpForumsRoleplayTask(BaseTask):
                 # Passed through filters!
                 yield episode
 
-def _failed_cleaning(message: str) -> bool:
-    '''
-    Sometimes markdownify, HTML tag removal and additional processing results
-    in a message which has nothing left, likely due to faulty formatting.
-    This function attempts to detect those situations, or other situations
-    '''
-    if len(message.strip()) <= 1:
-        return True
-    # OOC only.
-    if ONLY_OOC_PATTERN.search(message) is not None:
-        return True
-    return False
-
-def _thread_unsalvagable(turns: list[Turn], threshold: float = 0.5) -> bool:
-    '''
-    If the thread is messy enough that we can't salvage a threshold of messages,
-    then we just ditch the thread. By default, it's 50%.
-    '''
-    # Fun fact: True == 1 in Python, so we can just sum up the booleans.
-    return sum(_failed_cleaning(x.utterance) for x in turns) / len(turns) >= threshold
-
-# Unique functions (for now...)
-def _fix_markdown(original_message: str) -> str:
-    s = original_message
-
-    # Bold/italics sometimes doesn't have spaces around it after converting from
-    # HTML to Markdown for some reason.
-    is_opening_asterisk = True
-    while (match := MARKDOWN_NOSPACE_PATTERN.search(s)) is not None:
-        if is_opening_asterisk:
-            s = s[:match.start() + 1] + " " + s[match.start() + 1:]
-        else:
-            s = s[:match.end() - 1] + " " + s[match.end() - 1:]
-        is_opening_asterisk = not is_opening_asterisk
-
-    return s
-
-
-def _remove_bad_html_tags(message: str) -> str:
-    '''Cleans up HTML tags we don't want from the given message.'''
-    cleaned_message = _remove_html_tag(message, "blockquote")
-    cleaned_message = _remove_html_tag(cleaned_message, "script")
-
-    if "bbImageWrapper" in message:
-        # Images are a <div> with some JavaScript to lazy-load them, so we do
-        # this behind a guard to reduce false positives just in case.
-        cleaned_message = _remove_html_tag(cleaned_message, "div")
-
-    return cleaned_message
-
-
-def _remove_html_tag(message: str, tag: str) -> str:
-    '''Cleans the given HTML tag from the message.'''
-    cleaned_message = message
-    cleaning_passes = 0
-
-    while f"<{tag}" in cleaned_message:
-        assert cleaning_passes < 4, "Too many cleaning passes, giving up to avoid deadlocking"
-
-        start_idx = cleaned_message.find(f"<{tag}")
-        end_idx = cleaned_message.find(f"</{tag}>", start_idx)
-
-        if start_idx == -1 or end_idx == -1:
-            LOG.warning("Unbalanced tags found, leaving as-is")
-            break
-
-        cleaned_message = cleaned_message[:start_idx] + cleaned_message[
-            end_idx + len(f"</{tag}>"):]
-
-    return cleaned_message
-
-def _space_before_regex(text: str):
-    WHITESPACE = ["\n", " ", "\t"]
-    new_text = ''
-    last_end = 0
-    for match in REL_PATTERN.finditer(text):
-        # If the previous character is not a whitespace, add a space before the bracket
-        if match.start() > 0 and text[match.start() - 1] not in WHITESPACE:
-            new_text += text[last_end:match.start()] + ' ' + match.group(2)
-        else:
-            new_text += text[last_end:match.start()] + match.group(2)
-        
-        # If the following character is not a whitespace, add a space after the bracket
-        if match.end() < len(text) and text[match.end()] not in WHITESPACE:
-            new_text += ' '
-        
-        last_end = match.end()
-    new_text += text[last_end:]  # append the rest of the text after the last match
-    
-    return new_text
-
 # Constants
 
 SYSTEM_PROMPTS = [
@@ -311,9 +170,9 @@ SYSTEM_PROMPTS = [
     #
     '''You %{are now in|have entered|will now start|will enter} %{fiction writing|fantasy writing|fantasy roleplay|fictional RP|roleplay|RP|conversational RP} mode. Drive the story forward in chunks. {{response_length_str}}.''',
     #
-    '''You %{are trained to|will|must|have to|have a job to} %{perform|generate|make} %{storywriting|fiction writing|fantasy writing|fantasy roleplay|fictional roleplay|RP}. Generate %{continuations|a response|an appropriate response} for whatever the user %{gives|types|inputs}. {{response_length_str}}. {{content_type_str}}.''',
+    '''You %{are trained to|will|must|have to|have a job to|are ordered to} %{perform|generate|make} %{storywriting|fiction writing|fantasy writing|fantasy roleplay|fictional roleplay|RP}. Generate %{continuations|a response|an appropriate response} for whatever the user %{gives|types|inputs}. {{response_length_str}}. {{content_type_str}}.''',
     # Modified SillyTavern prompt
-    '''Write the next reply in a fictional %{roleplay|RP} %{chat|conversation}. {{content_type_str}}. {{response_length_str}}.''',
+    '''%{Write|Generate|Create} the next %{reply|turn} %{in|for} a %{fictional|interactive} %{roleplay|RP} %{chat|conversation}. {{content_type_str}}. {{response_length_str}}.''',
     #
     '''%{SYSTEM|MODE}: %{conversational roleplay|RP|roleplay mode|RP system engaged}
 %{NOTE|ADVISORY|KEEP IN MIND}: {{response_length_str}}''',
@@ -330,7 +189,7 @@ SYSTEM_PROMPTS = [
 %{pls|please} %{rember|remember} to %{b|be} %{engaging|immersive|epic}''',
     #
     '''%{You are|You're} in an %{uncensored|unfiltered} %{never-ending|never ending|neverending} %{roleplay|RP|fictional roleplay}.
-%{Follow|Obey|Heed|Stick to} these %{guidelines|rules|guidelines during your generations}:
+%{Follow|Obey|Heed|Stick to|Abide by} %{these|the} %{guidelines|rules|guidelines during your generations}:
 {{content_type_str}}. {{response_length_str}}.'''
 ]
 
@@ -339,11 +198,11 @@ SFW_PROMPTS = [
 ]
 
 MIXED_SFW_NSFW_PROMPTS = [
-    "%{Generations|Your writing|The generated response|Your reply|Generated replies} %{may or may not include adult themes|may or may not be NSFW|can include adult themes}",
+    "%{Generations|Your writing|The generated response|Your reply|Generated replies} %{may or may not include adult themes|may or may not be NSFW|can include adult themes|could potentially be 18+ content|may contain adult content|may contain erotic themes|may contain 18+ content|may contain NSFW content}",
 ]
 
 NSFW_PROMPTS = [
-    "%{Generations|Your writing|The generated response|Your reply|Generated replies} must %{be not safe for work|be NSFW|include adult themes|include erotic themes|include 18+ content}",
+    "%{Generations|Your writing|The generated response|Your reply|Generated replies} %{must|should, in nature} %{be not safe for work|be NSFW|include adult themes|include erotic themes|include 18+ content|contain adult content}",
 ]
 
 WHITESPACE = ["\n", " ", "\t"]

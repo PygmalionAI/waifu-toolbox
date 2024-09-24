@@ -153,6 +153,14 @@ RpForumsRoleplayTask:
     - ExactDedupFilter
     - LowQualityRpFilter
   remove_ooc: true
+# RP Guild
+RpGuildRoleplayTask:
+  custom_prompts:
+  dataset_name: "rpguild"
+  filters:
+    - ExactDedupFilter
+    - LowQualityRpFilter
+  remove_ooc: true
 # SlimOrca
 SlimOrcaInstructionFollowingTask:
   custom_prompts:

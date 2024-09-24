@@ -21,6 +21,7 @@ from .norobots_instruction_following import NoRobotsInstructionFollowingTask
 from .opencai_roleplay import OpenCaiRoleplayTask
 from .pygclaude_roleplay import PygClaudeRoleplayTask
 from .rp_forums_roleplay import RpForumsRoleplayTask
+from .rp_guild_roleplay import RpGuildRoleplayTask
 from .slimorca_instruction_following import SlimOrcaInstructionFollowingTask
 from .teatime_roleplay import TeatimeRoleplayTask
 
@@ -47,6 +48,7 @@ NAME_TO_TASK_MAPPING: dict[str, Type[BaseTask]] = {
         OpenCaiRoleplayTask,
         PygClaudeRoleplayTask,
         RpForumsRoleplayTask,
+        RpGuildRoleplayTask,
         SlimOrcaInstructionFollowingTask,
         TeatimeRoleplayTask,
     ]

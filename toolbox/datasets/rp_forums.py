@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Generator
 
+from .common import RpMessage
 from ..core import BaseDataset
 from ..utils import enumerate_files_for
 
@@ -17,12 +18,6 @@ class RpType(Enum):
     ERP = "erp"
     RP = "rp"
     MIXED = "mixed"
-
-
-@dataclass(frozen=True)
-class RpMessage:
-    author: str
-    message: str
 
 
 @dataclass(frozen=True)

@@ -16,7 +16,9 @@ from ..utils import PromptManager, fix_style_and_encoding_issues
 LOG = logging.getLogger(__name__)
 
 class PygClaudeRoleplayTask(BaseTask):
-    '''Roleplaying task for the AI Town dataset.'''
+    '''
+    Roleplaying task for the Claude logs submitted to Pyg.
+    '''
     def __init__(
         self,
         filters: list[BaseFilter],

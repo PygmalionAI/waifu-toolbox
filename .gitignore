@@ -12,5 +12,6 @@
 !/data/.keep
 
 # Testing files.
-/test_config.yml
+/blankcheck.py
 /*.jsonl
+/test_config.yml

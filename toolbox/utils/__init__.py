@@ -1,3 +1,7 @@
+from .clean_rp import (
+    clean_message,
+    thread_unsalvagable
+)
 from .files import *
 from .process import (
     fix_style_and_encoding_issues,

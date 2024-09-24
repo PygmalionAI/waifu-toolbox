@@ -11,6 +11,11 @@ class AlpacaLikeDataInstance:
     output: str
 
 @dataclass
+class RpMessage:
+    author: str
+    message: str
+
+@dataclass
 class MessageAndRole:
     message: str
     role: str
