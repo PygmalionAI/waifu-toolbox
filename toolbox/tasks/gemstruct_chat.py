@@ -1,4 +1,5 @@
 import logging
+import re
 import string
 
 from typing import Generator, Optional
@@ -14,6 +15,8 @@ from ..datasets import GemstructDataset
 from ..utils import PromptManager
 
 LOG = logging.getLogger(__name__)
+
+NONSPACED_ELLIPSES_PATTERN = re.compile(r"(\S)(\.{3,}|…)(\S)")
 
 class GemstructChatTask(BaseTask):
     def __init__(
@@ -52,16 +55,29 @@ class GemstructChatTask(BaseTask):
                 LOG.debug(f"Skipping conversation gemstruct-{idx} because it was generated with Llama-3!")
                 continue
 
+            # Handle possible custom system prompts.
+            sys_prompt = chat.conversation[0].message if self.custom_prompts is None \
+                else self.prompts.sample_prompt()
+            conversation = conversation[1:]
+
+            # If the last turn is from the user, drop it.
+            if conversation[-1].role == "user":
+                conversation = conversation[:-1]
+
             # Some entries are borked. If no messages from the bot at all, drop it.
             if not any(message.role == "assistant" for message in conversation):
                 LOG.debug(f"Skipping conversation gemstruct-{idx} because there are no bot messages!")
                 continue
+
             # And if there's blank messages, trim the conversation to the last non-blank message.
             blank_msg_idx = next((i for i, message in enumerate(conversation) if message.message.strip() == ""), None)
             if blank_msg_idx is not None:
                 conversation = conversation[:blank_msg_idx]
-            # If less than three messages, drop it.
-            if len(conversation) < 3:
+
+            # If less than three messages in the *total* conversation,
+            # including system prompt (which was already trimmed from `conversation`, hence `< 2``),
+            # drop it.
+            if len(conversation) < 2:
                 LOG.debug(f"Skipping conversation gemstruct-{idx} because it has less than three non-blank messages!")
                 continue
 
@@ -76,15 +92,6 @@ class GemstructChatTask(BaseTask):
                     LOG.debug(f"Skipping conversation gemstruct-{idx} because the average proportion of capitalized words in the bot messages is too high!")
                     continue
 
-            # Handle possible custom system prompts.
-            sys_prompt = chat.conversation[0].message if self.custom_prompts is None \
-                else self.prompts.sample_prompt()
-            conversation = conversation[1:]
-
-            # If the last turn is from the user, drop it.
-            if conversation[-1].role == "user":
-                conversation = conversation[:-1]
-
             turns = [
                 Turn(
                     utterance=sys_prompt,
@@ -93,8 +100,14 @@ class GemstructChatTask(BaseTask):
             ]
 
             for message in conversation:
+                utterance = message.message.strip()
+                # Get rid of non-standard ellipses and ellipses which aren't spaced properly.
+                utterance = NONSPACED_ELLIPSES_PATTERN.sub(r"\1... \3", utterance)
+                utterance = utterance.replace("…", "...")
+                # Non-standard quotation marks and apostrophes too.
+                utterance = utterance.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
                 turns.append(Turn(
-                    utterance=message.message.strip(),
+                    utterance=utterance,
                     kind=TurnKind.USER if message.role == "user" else TurnKind.MODEL,
                 ))
             
