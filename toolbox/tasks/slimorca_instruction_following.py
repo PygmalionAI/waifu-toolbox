@@ -1,4 +1,5 @@
 import logging
+import random
 import re
 
 from typing import Generator, Optional
@@ -16,6 +17,12 @@ from ..utils import PromptManager
 # Should handle most instances of "You are a(n)... assistant"
 ASSISTANT_PATTERN = re.compile(r"^You are a.*?\.\s*")
 
+SUMMARY_PHRASES = [
+    "in conclusion",
+    "in summary",
+    "to sum up",
+]
+
 LOG = logging.getLogger(__name__)
 
 class SlimOrcaInstructionFollowingTask(BaseTask):
@@ -24,6 +31,7 @@ class SlimOrcaInstructionFollowingTask(BaseTask):
         self,
         filters: list[BaseFilter],
         custom_prompts: Optional[list[str]] = None,
+        max_examples: int = 20000,
         **kwargs
     ) -> None:
         super().__init__(filters=filters)
@@ -31,13 +39,22 @@ class SlimOrcaInstructionFollowingTask(BaseTask):
         kwargs = {"generic_prompts": "assistant"} if custom_prompts is None \
             else {"custom_prompts": custom_prompts}
         self.prompts = PromptManager(**kwargs)
+        self.max_examples = max_examples
 
     def __iter__(self) -> Generator[Episode, None, None]:
         LOG.info("Processing data for task SlimOrcaInstructionFollowingTask.")
         for idx, example in enumerate(SlimOrcaDataset()):
+            if idx >= self.max_examples:
+                break
+
+            # If there's obvious GPT-like summary phrases, have a chance of removing them.
+            if any(phrase in example.response.lower() for phrase in SUMMARY_PHRASES):
+                if random.random() < 0.5:
+                    continue
+
+            system_prompt = self.prompts.sample_prompt()
             # Remove the default "you are an AI assistant" instruction which is
             # typically in the first sentence of an OpenOrca system prompt
-            system_prompt = self.prompts.sample_prompt()
             additional_instructions = re.sub(ASSISTANT_PATTERN, "", example.system_prompt)
             if additional_instructions != "":
                 system_prompt += f"\n{additional_instructions}"
