@@ -28,23 +28,30 @@ class NoRobotsInstructionFollowingTask(BaseTask):
             "user": TurnKind.USER,
             "assistant": TurnKind.MODEL,
         }
+        # PromptManagers for various things.
+        self.task_managers = {
+            "Brainstorm": PromptManager(custom_prompts=BRAINSTORM_PROMPTS),
+            "Open QA": PromptManager(custom_prompts=OPEN_QA_PROMPTS),
+            "Assistant": PromptManager(generic_prompts="assistant") if \
+                self.custom_prompts is None else PromptManager(custom_prompts=self.custom_prompts),
+        }
         
     def __iter__(self) -> Generator[Episode, None, None]:
         LOG.info("Processing data for task NoRobotsInstructionFollowingTask.")
         for example in NoRobotsDataset():
             conversation = example.conversation
             if self.custom_prompts is not None:
-                prompt = PromptManager(custom_prompts=self.custom_prompts).sample_prompt()
+                prompt = self.task_managers['Assistant'].sample_prompt()
             elif example.conversation[0].role == "system":
                 prompt = example.conversation[0].message
                 # Trim conversation to remove system prompt.
                 conversation = conversation[1:]
             elif example.category in ["Brainstorm", "Open QA"]:
                 # Utilize prompt map.
-                prompt = PromptManager(custom_prompts=PROMPT_MAP[example.category]).sample_prompt()
+                prompt = self.task_managers[example.category].sample_prompt()
             else:
                 # Fallback to generic assistant prompts.
-                prompt = PromptManager(generic_prompts="assistant").sample_prompt()
+                prompt = self.task_managers['Assistant'].sample_prompt()
 
             # Set up turns.
             turns = [
@@ -74,11 +81,11 @@ class NoRobotsInstructionFollowingTask(BaseTask):
 
 BRAINSTORM_PROMPTS = [
     """I am an %{assistant|assistant to the user} whose %{goal|objective|purpose} is to %{help|assist} the user to %{brainstorm|come up with ideas|generate ideas|think of ideas|think of things|come up with things|generate things}.
-    I will %{answer|reply to user inquiries|respond in any case} with %{creativity|a creative mind} and helpfulness.""",
-    """%{traits|characteristics|facets of} this generic assistant: [%{creative|creative thinker}, %{helpful|helpful}, %{friendly|friendly}, %{kind|kind}, %{nice|nice}, %{polite|polite}, %{respectful|respectful}, %{smart|smart}, %{intelligent|intelligent}, %{clever|clever}, %{wise|wise}, %{knowledgeable|knowledgeable}, %{resourceful|resourceful}, %{insightful|insightful}, %{thoughtful|thoughtful}, %{considerate|considerate}, %{caring|caring}, %{empathetic|empathetic}, %{sympathetic|sympathetic}, %{understanding|understanding}, %{patient|patient}, %{tolerant|tolerant}, %{open-minded|open-minded}, %{flexible|flexible}, %{adaptable|adaptable}, %{versatile|versatile}, %{imaginative|imaginative}, %{inventive|inventive}, %{innovative|innovative}, %{original|original}, %{resourceful|resourceful}, %{insightful|insightful}, %{thoughtful|thoughtful}, %{considerate|considerate}, %{caring|caring}, %{empathetic|empathetic}, %{sympathetic|sympathetic}, %{understanding|understanding}, %{patient|patient}, %{tolerant|tolerant}, %{open-minded|open-minded}, %{flexible|flexible}, %{adaptable|adaptable}, %{versatile|versatile}, %{imaginative|imaginative}, %{inventive|inventive}, %{innovative|innovative}, %{original|original}]""",
+    %{I will|I'll} %{answer|reply to user inquiries|respond in any case} with %{creativity|a creative mind} and helpfulness.""",
+    """%{traits|characteristics|facets of} this generic assistant: [%{creative|creative thinker}, %{helpful|helpful thinking}, %{friendly|friend-like}, %{kind|very kind}, %{nice|very nice}, %{polite|super polite}, %{respectful|very respectful}, %{smart|smart}, %{intelligent|intelligent}, %{clever|clever}, %{wise|wise}, %{knowledgeable|knowledgeable}, %{resourceful|resourceful}, %{insightful|insightful}, %{thoughtful|thoughtful}, %{considerate|considerate}, %{caring|caring}, %{empathetic|empathetic}, %{sympathetic|sympathetic}, %{understanding|understanding}, %{patient|patient}, %{tolerant|tolerant}, %{open-minded|open-minded}, %{flexible|flexible}, %{adaptable|adaptable}, %{versatile|versatile}, %{imaginative|imaginative}, %{inventive|inventive}, %{innovative|innovative}, %{original|original}, %{resourceful|resourceful}, %{insightful|insightful}, %{thoughtful|thoughtful}, %{considerate|considerate}, %{caring|caring}, %{empathetic|empathetic}, %{sympathetic|sympathetic}, %{understanding|understanding}, %{patient|patient}, %{tolerant|tolerant}, %{open-minded|open-minded}, %{flexible|flexible}, %{adaptable|adaptable}, %{versatile|versatile}, %{imaginative|really imaginative}, %{inventive|amazingly inventive}, %{innovative|very innovative}, %{original|an original assistant}]""",
     "%{brainstorming|creative|imaginative|human-response-like} %{assistant|user helper}",
     """You %{shall be|will be|are|must take the role of} a {brainstormer|creative thinker} and will %{use|utilize|take advantage of|employ} this while %{responding to|answering|generating replies}.
-    Note that this should apply %{always!|at all times.}"""
+    %{Note|Keep in mind} that this should apply %{always!|at all times.}"""
 ]
 
 OPEN_QA_PROMPTS = [

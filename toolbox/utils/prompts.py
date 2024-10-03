@@ -14,7 +14,7 @@ GENERIC_ASSISTANT_PROMPTS = [
     "%{Purpose|Goal|Job}: Assistant\n%{Procedure|Objective|Methods of achieving your goal}: %{Answer the user's questions|Follow the instructions|Obey commands}",
     "%{I am|I'm} %{a helper for a user|a helpful assistant|engaged in what one might call 'instruction' mode}. Given %{queries|user queries}, I am to %{correctly|accurately} answer these things (at least, as best as I can).",
     "%{Instruction|Instruct} mode!",
-    "u %{have|need|are required} to answer whatever i ask and do whatever i say%{!|.} do it now!!!",
+    "%{u|you} %{have|need|are required} to answer whatever i ask and do whatever i say%{!|.} do it now!!!",
     "%% %{ASSISTANT|INSTRUCT} MODE %{ACTIVATED|ENGAGED|ON|IN EFFECT} %%",
     "%{Personality|Persona}: A %{helpful|able} assistant whose %{job|objective} is to %{follow|obey|heed} instructions and be useful while doing %{so|it}.",
     "%{Please|Please do|Ok, so just|I order you to|I demand that you} %{follow|obey|heed} the %{user's instructions|instructions|directions} below.",
@@ -28,8 +28,8 @@ GENERIC_ASSISTANT_PROMPTS = [
 GENERIC_GTI_PROMPTS = [
     "%{Enter|Engage|Begin|Consider} %{instruction guessing|reverse instruction|reverse questioning|reverse question} mode. In this mode, a user will type some %{text|answer|information} and %{the AI|you} will attempt to guess the instruction which %{corresponds|aligns with} the user's input. Do not say anything else but the instruction.",
     "%{Mode|Task}: 'Guess The Instruction'\nA user will type %{text|answer|information} and it is %{your|the AI's|the assistant's} %{job|goal} to answer with a generated instruction. Think of this almost like a question-guessing game.",
-    "You are now in %{flipped instruction|reverse instruction|instruction guessing} mode. The %{user|prompter} will type something like an %{AI-|artificially }generated answer and you will provide the instruction that was used to %{generate|create} that answer.",
-    "I am an %{assistant|AI} designed to %{guess|predict} what a user %{may|could|might} type as a question. The %{user|prompter} will send some sort of information and %{perhaps|maybe} some %{additional|extra} %{context|info|information} in order for me to do so.",
+    "%{You are|You're} now in %{flipped instruction|reverse instruction|instruction guessing} mode. The %{user|prompter} will type something like an %{AI-|artificially }generated answer and you will provide the instruction that was used to %{generate|create} that answer.",
+    "%{I am|I'm} an %{assistant|AI} designed to %{guess|predict} what a user %{may|could|might} type as a question. The %{user|prompter} will send some sort of information and %{perhaps|maybe} some %{additional|extra} %{context|info|information} in order for me to do so.",
     "This assistant will get an answer from a user and %{guess|predict} a question that would result in that answer. Your question %{will|must} be...",
     "%{I|I'll|i|i'll} %{predict|guess|foresee} whatever question you'll ask, %{given|if given} an answer!",
     "%{guess|take a shot at|predict} the %{instruction|question}",
@@ -62,10 +62,10 @@ class PromptManager:
         self.balanced = balance_prompt_choices
         if custom_prompts is not None:
             assert len(custom_prompts) > 0, "No custom prompts have been supplied!"
-            self.prompts = self.generate_prompts(custom_prompts)
+            self.prompts = custom_prompts
         else:
             # No assertions required because we did that above
-            self.prompts = self.generate_prompts(GENERIC_PROMPT_MAP[generic_prompts])
+            self.prompts = GENERIC_PROMPT_MAP[generic_prompts]
     
     def generate_variants_for(
             self,
@@ -124,31 +124,45 @@ class PromptManager:
         else:
             yield string
 
-    def generate_prompts(self, system_prompts: list[str]) -> list[str]:
-        '''
-        Generates a list of all prompts constructed from variants.
-
-        Args: balanced - accounts for how certain prompts have more variants
-        than others and makes prompt choosing more 'equal'.
-        '''
-        prompt_list = [list(self.generate_variants_for(x)) for x in system_prompts]
-        # If we don't want to balance the prompts, flatten the list
-        if not self.balanced:
-            flat_list = []
-            for l in prompt_list:
-                flat_list += l
-            prompt_list = flat_list
-
-        return prompt_list
+    #def generate_prompts(self, system_prompts: list[str]) -> list[str]:
+    #    '''
+    #    Generates a list of all prompts constructed from variants.
+    #
+    #    Args: balanced - accounts for how certain prompts have more variants
+    #    than others and makes prompt choosing more 'equal'.
+    #    '''
+    #    prompt_list = [list(self.generate_variants_for(x)) for x in system_prompts]
+    #    # If we don't want to balance the prompts, flatten the list
+    #    if not self.balanced:
+    #        flat_list = []
+    #        for l in prompt_list:
+    #            flat_list += l
+    #        prompt_list = flat_list
+    #
+    #    return prompt_list
     
     def sample_prompt(self) -> str:
         '''Samples a random system prompt.'''
-
-        if self.balanced:
-            # Deal with lists of lists
-            return random.choice(random.choice(self.prompts))
+        # Get a base template for which we can generate a variant on the fly for.
+        base_template = random.choice(self.prompts)
+        if re.search(VARIANT_REGEX, base_template) is not None:
+            # First copy the base template so that we don't need to worry
+            # about anything weird happening during finditer.
+            selected_template = base_template
+            for variant in re.finditer(VARIANT_REGEX, base_template):
+                # Get the variant and choose a random one.
+                # We do a hacky trim to get rid of the surrounding brackets and %.
+                variant_text = variant.group(0)
+                choices = variant_text[2:-1].split("|")
+                choice = random.choice(choices)
+                # Replace the variant text ONCE with the chosen one,
+                # so that any duplicate variants are not replaced also.
+                selected_template = selected_template.replace(variant_text, choice, 1)
+            # The template has been selected and we can now return it.
+            return selected_template
         else:
-            return random.choice(self.prompts)
+            return base_template
+        
     
     @staticmethod
     def fill_response_style_length(prompt: str, response: str) -> str:

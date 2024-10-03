@@ -99,6 +99,7 @@ LimaRpRoleplayTask:
   filters:
     - ExactDedupFilter
     - LowQualityRpFilter
+    - SimilarityFilter
 # Magnum
 MagnumMixedPurposeTask:
   custom_prompts:
